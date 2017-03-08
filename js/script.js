@@ -33,6 +33,7 @@ $(function () {
 
 	var controller = {
 		init: function() {
+			model.currentCat = model.cats[0];
 			viewList.init();
 			viewCat.init();
 		},
@@ -40,28 +41,33 @@ $(function () {
 			return model.cats;
 		},
 		getCurrentCat: function() {
-			return !model.currentCat ? model.cats[0] : model.currentCat;
+			return model.currentCat;
 		},
 		setCurrentCat: function(cat){
 			model.currentCat = cat;
-			viewCat.render();
+			//viewCat.render();
 		},
-		counterClicker: function(cat){
-			//
+		counterClicker: function(){
+			//console.log(model);
+			model.currentCat.clicks++;
+			//viewList.render();
+			viewCat.render();
 		}
 	}
 
 	var viewList = {
 		init: function () {
 			this.catList = document.getElementById("cats-list");
-			viewList.render();
+			this.render();
 		},
 		render: function() {
+			//this.catList.innerHTML = "";
 			controller.getCats().forEach(function(el) {
 				var litem = document.createElement('li');
 				var litxt = document.createTextNode(el.name);
 				litem.addEventListener('click', function() {
 					controller.setCurrentCat(el);
+					viewCat.render();
 				});
 				litem.appendChild(litxt);
 				this.catList.appendChild(litem);
@@ -76,15 +82,16 @@ $(function () {
 			this.catDetailsTitle = document.getElementById("cat-details-title");
 			this.catDetailsPic = document.getElementById("cat-details-pic");
 			this.catDetailsClicks = document.getElementById("cat-details-clicks");
-			viewCat.render();
+			this.catDetailsPic.addEventListener('click', function() {
+				controller.counterClicker();
+			})
+			this.render();
 		},
 		render: function() {
+			//controller.getCurrentCat()
 			var cat = controller.getCurrentCat();
 			this.catDetailsTitle.innerHTML = cat.name;
 			this.catDetailsPic.setAttribute('src',cat.pic);
-			this.catDetailsPic.addEventListener('click', function() {
-
-			})
 			this.catDetailsClicks.innerHTML = cat.clicks;
 		}
 	}
